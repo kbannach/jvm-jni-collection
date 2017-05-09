@@ -19,6 +19,9 @@ public class BigIntArrayList implements List<Integer> {
    }
 
    public BigIntArrayList(int initSize) {
+      if (initSize < 0) {
+         throw new IllegalArgumentException("Initial size can't be lower than 0!");
+      }
       nativeCollection = new JNICollection(initSize);
    }
 
@@ -84,27 +87,35 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public boolean addAll(Collection< ? extends Integer> c) {
-      c.stream().forEach(i -> add(i));
-      // TODO return value
-      return true;
+      boolean ret = true;
+      for (Integer i : c) {
+         ret = ret && add(i);
+      }
+      return ret;
    }
 
    @Override
    public boolean addAll(int index, Collection< ? extends Integer> c) {
-      // TODO Auto-generated method stub
-      return false;
-   }
-
-   @Override
-   public boolean removeAll(Collection< ? > c) {
-      c.stream().forEach(i -> remove(i));
-      // TODO return value
+      rangeCheck(index);
+      int idx = index;
+      for (Integer i : c) {
+         add(idx++, i);
+      }
       return true;
    }
 
    @Override
+   public boolean removeAll(Collection< ? > c) {
+      boolean ret = false;
+      for (Object i : c) {
+         ret = ret || remove(i);
+      }
+      return ret;
+   }
+
+   @Override
    public boolean retainAll(Collection< ? > c) {
-      // TODO Auto-generated method stub
+      // TODO or not TODO ???
       return false;
    }
 
@@ -115,22 +126,25 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public Integer get(int index) {
+      rangeCheck(index);
       return nativeCollection.get(index);
    }
 
    @Override
    public Integer set(int index, Integer element) {
+      rangeCheck(index);
       return nativeCollection.set(element, index);
    }
 
    @Override
    public void add(int index, Integer element) {
-      // TODO Auto-generated method stub
-
+      rangeCheck(index);
+      nativeCollection.add(index, element);
    }
 
    @Override
    public Integer remove(int index) {
+      rangeCheck(index);
       int ret = nativeCollection.get(index);
       nativeCollection.remove(index);
       return ret;
@@ -138,14 +152,21 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public int indexOf(Object o) {
-      // TODO Auto-generated method stub
-      return 0;
+      try {
+         return IntStream.rangeClosed(0, nativeCollection.lastIdx()).filter(i -> get(i) == (int) o).findFirst().getAsInt();
+      } catch (NoSuchElementException e) {
+         return -1;
+      }
    }
 
    @Override
    public int lastIndexOf(Object o) {
-      // TODO Auto-generated method stub
-      return 0;
+      int[] arr = IntStream.rangeClosed(0, nativeCollection.lastIdx()).filter(i -> get(i) == (int) o).toArray();
+      if (arr.length == 0) {
+         return -1;
+      } else {
+         return arr[arr.length - 1];
+      }
    }
 
    @Override
@@ -166,10 +187,32 @@ public class BigIntArrayList implements List<Integer> {
    }
 
    private Stream<Integer> mapAllToObjStream() {
-      return mapToObjStream(0, nativeCollection.lastIdx() + 1);
+      return mapToObjStream(0, nativeCollection.lastIdx());
    }
 
+   /**
+    * @param fromIndex
+    *        (inclusive)
+    * @param toIndex
+    *        (inclusive)
+    */
    private Stream<Integer> mapToObjStream(int fromIndex, int toIndex) {
-      return IntStream.range(fromIndex, toIndex).mapToObj(i -> get(i));
+      subListRangeCheck(fromIndex, toIndex, nativeCollection.lastIdx());
+      return IntStream.rangeClosed(fromIndex, toIndex).mapToObj(i -> get(i));
+   }
+
+   private void rangeCheck(int index) {
+      if (index > nativeCollection.lastIdx()) {
+         throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + nativeCollection.lastIdx());
+      }
+   }
+
+   private void subListRangeCheck(int fromIndex, int toIndex, int lastIdx) {
+      if (fromIndex < 0)
+         throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+      if (toIndex > lastIdx)
+         throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+      if (fromIndex > toIndex)
+         throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
    }
 }

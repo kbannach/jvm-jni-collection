@@ -1,7 +1,5 @@
 package collection;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class JNICollection {
@@ -15,19 +13,43 @@ public class JNICollection {
       pointer = allocate(initSize);
    }
 
+   public int lastIdx() {
+      return lastIdx;
+   }
+
+   public int size() {
+      return size;
+   }
+
+   /**
+    * allocates an int array of size {@code newSize} in JVM native memory
+    * 
+    * @return pointer to allocated array
+    */
    private native long allocate(int newSize);
 
+   /**
+    * enlarges the collection to 5/3 of its current size
+    */
    private native void enlarge();
 
    private native long free();
 
+   /**
+    * @return element at the specified position
+    */
    public native int get(int index);
 
    /**
+    * set {@code element} at the specified position
+    * 
     * @return the element previously at the specified position
     */
-   public native int set(int el, int idx);
+   public native int set(int element, int idx);
 
+   /**
+    * remove element at the specified position
+    */
    public native void remove(int index);
 
    public boolean add(int e) {
@@ -38,12 +60,17 @@ public class JNICollection {
       return true;
    }
 
-   public int lastIdx() {
-      return lastIdx;
-   }
+   public void add(int index, Integer element) {
+      // move last element, ensuring that it woult fit in
+      add(get(lastIdx));
 
-   public int size() {
-      return size;
+      // move rest of the elements
+      for (int i = lastIdx - 1; i >= index; i--) {
+         set(get(i), i + 1);
+      }
+
+      // add the specified element
+      set(element, index);
    }
 
    public void clear() {
