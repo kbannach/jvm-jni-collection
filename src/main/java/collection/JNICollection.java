@@ -4,6 +4,10 @@ import java.util.stream.IntStream;
 
 public class JNICollection {
 
+   static {
+      System.loadLibrary("collection");
+   }
+
    private long pointer;
    private int  size;
    private int  lastIdx;
