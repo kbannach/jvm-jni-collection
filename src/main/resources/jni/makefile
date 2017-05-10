@@ -1,4 +1,4 @@
-# makefile fount at http://www.bogotobogo.com/cplusplus/eclipse_CDT_JNI_MinGW_64bit.php
+# makefile found at https://developers.redhat.com/blog/2016/11/03/eclipse-for-jni-development-and-debugging-on-linux-java-and-c/
 
 # Define a variables
 CLASS_PATH = ../../../../target/classes
