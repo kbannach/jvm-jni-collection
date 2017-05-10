@@ -1,6 +1,11 @@
 .*
 *.class
 
+# C libraries and objects
+*.o
+*.so
+
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
