@@ -10,19 +10,35 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+/**
+ * !!! IMPORTANT !!!<br>
+ * Always destroy this object manually by calling {@code destroy()} method!!!
+ */
 public class BigIntArrayList implements List<Integer> {
 
    private JNICollection nativeCollection;
 
+   /**
+    * !!! IMPORTANT !!!<br>
+    * Always destroy this object manually by calling {@code destroy()} method!!!
+    */
    public BigIntArrayList() {
       this(10);
    }
 
+   /**
+    * !!! IMPORTANT !!!<br>
+    * Always destroy this object manually by calling {@code destroy()} method!!!
+    */
    public BigIntArrayList(int initSize) {
       if (initSize < 0) {
          throw new IllegalArgumentException("Initial size can't be lower than 0!");
       }
       nativeCollection = new JNICollection(initSize);
+   }
+
+   public void destroy() {
+      nativeCollection.free();
    }
 
    @Override
