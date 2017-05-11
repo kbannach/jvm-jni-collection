@@ -34,10 +34,15 @@ public class JNICollection {
 
    /**
     * enlarges the collection to 5/3 of its current size
+    * 
+    * @return new pointer
     */
-   private native void enlarge();
+   private native long enlarge();
 
-   private native long free();
+   /**
+    * free memory
+    */
+   public native void free();
 
    /**
     * @return element at the specified position
@@ -51,14 +56,9 @@ public class JNICollection {
     */
    public native int set(int element, int idx);
 
-   /**
-    * remove element at the specified position
-    */
-   public native void remove(int index);
-
    public boolean add(int e) {
       if (lastIdx == size - 1) {
-         enlarge();
+         pointer = enlarge();
       }
       set(e, ++lastIdx);
       return true;
@@ -75,6 +75,13 @@ public class JNICollection {
 
       // add the specified element
       set(element, index);
+   }
+
+   public void remove(int index) {
+      for (int i = index; i < lastIdx; i++) {
+         set(get(i + 1), i);
+      }
+      set(0, lastIdx--);
    }
 
    public void clear() {
