@@ -1,37 +1,59 @@
 #include <jni.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "collection_JNICollection.h"
 
-JNIEXPORT jlong JNICALL Java_collection_JNICollection_allocate(JNIEnv *,
-		jobject, jint size) {
-	return (jlong) calloc(sizeof(int) * size);
+// private methods
+
+int getSize(JNIEnv *env, jobject this) {
+	jclass cls = env->GetObjectClass(this);
+	jfieldID iField = env->GetFieldID(cls, "size", "J");
+	jint i = env->GetIntField(this, iField);
+	return (int) i;
 }
 
-JNIEXPORT void JNICALL Java_collection_JNICollection_enlarge
-(JNIEnv *env, jobject this) {
-
-	return;
+int* getPointer(JNIEnv *env, jobject this) {
+	jclass cls = env->GetObjectClass(this);
+	jfieldID iField = env->GetFieldID(cls, "pointer", "J");
+	jlong i = env->GetLongField(this, iField);
+	return (int*) i;
 }
 
-JNIEXPORT jlong JNICALL Java_collection_JNICollection_free(JNIEnv *, jobject) {
+// methods used in JNI
 
-	return 0;
+JNIEXPORT jlong JNICALL Java_collection_JNICollection_allocate(JNIEnv *env,
+		jobject this, jint size) {
+	return (jlong) calloc(size, sizeof(int));
 }
 
-JNIEXPORT jint JNICALL Java_collection_JNICollection_get(JNIEnv *, jobject,
-		jint) {
 
-	return 0;
+JNIEXPORT jlong JNICALL Java_collection_JNICollection_enlarge(JNIEnv *env,
+		jobject this) {
+	int size = getSize(env, this);
+	int* newTab = (int*) calloc(size * 5 / 3, sizeof(int));
+	int* tab = getPointer(env, this);
+
+	for(int i=0; i<size;i++){
+		newTab[i] = tab[i];
+	}
+	return (jlong*) newTab;
 }
 
-JNIEXPORT jint JNICALL Java_collection_JNICollection_set(JNIEnv *, jobject,
-		jint, jint) {
-
-	return 0;
+JNIEXPORT void JNICALL Java_collection_JNICollection_free(JNIEnv *env,
+		jobject this) {
+	free(getPointer(env, this));
 }
 
-JNIEXPORT void JNICALL Java_collection_JNICollection_remove
-(JNIEnv *, jobject, jint) {
+JNIEXPORT jint JNICALL Java_collection_JNICollection_get(JNIEnv *env,
+		jobject this, jint index) {
+	return getPointer(env, this)[(int) index];
+}
 
-	return;
+JNIEXPORT jint JNICALL Java_collection_JNICollection_set(JNIEnv *env,
+		jobject this, jint element, jint index) {
+	int idx = (int) index;
+	int* tab = getPointer(env, this);
+	int oldVal = tab[idx];
+	tab[idx] = (int) element;
+	return oldVal;
 }
