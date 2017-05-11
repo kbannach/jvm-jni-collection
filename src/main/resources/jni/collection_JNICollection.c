@@ -6,16 +6,16 @@
 // private methods
 
 int getSize(JNIEnv *env, jobject this) {
-	jclass cls = env->GetObjectClass(this);
-	jfieldID iField = env->GetFieldID(cls, "size", "J");
-	jint i = env->GetIntField(this, iField);
+	jclass cls = (*env)->GetObjectClass(env, this);
+	jfieldID iField = (*env)->GetFieldID(env, cls, "size", "J");
+	jint i = (*env)->GetIntField(env, this, iField);
 	return (int) i;
 }
 
 int* getPointer(JNIEnv *env, jobject this) {
-	jclass cls = env->GetObjectClass(this);
-	jfieldID iField = env->GetFieldID(cls, "pointer", "J");
-	jlong i = env->GetLongField(this, iField);
+	jclass cls = (*env)->GetObjectClass(env, this);
+	jfieldID iField = (*env)->GetFieldID(env, cls, "pointer", "J");
+	jlong i = (*env)->GetLongField(env, this, iField);
 	return (int*) i;
 }
 
@@ -33,10 +33,11 @@ JNIEXPORT jlong JNICALL Java_collection_JNICollection_enlarge(JNIEnv *env,
 	int* newTab = (int*) calloc(size * 5 / 3, sizeof(int));
 	int* tab = getPointer(env, this);
 
-	for(int i=0; i<size;i++){
+	int i;
+	for(i=0; i<size;i++){
 		newTab[i] = tab[i];
 	}
-	return (jlong*) newTab;
+	return (jlong) newTab;
 }
 
 JNIEXPORT void JNICALL Java_collection_JNICollection_free(JNIEnv *env,
