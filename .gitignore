@@ -4,7 +4,7 @@
 # C libraries and objects
 *.o
 *.so
-
+Debug/*
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
