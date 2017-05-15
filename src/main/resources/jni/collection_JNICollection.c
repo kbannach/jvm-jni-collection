@@ -7,7 +7,7 @@
 
 int getSize(JNIEnv *env, jobject this) {
 	jclass cls = (*env)->GetObjectClass(env, this);
-	jfieldID iField = (*env)->GetFieldID(env, cls, "size", "J");
+	jfieldID iField = (*env)->GetFieldID(env, cls, "size", "I");
 	jint i = (*env)->GetIntField(env, this, iField);
 	return (int) i;
 }
@@ -37,6 +37,8 @@ JNIEXPORT jlong JNICALL Java_collection_JNICollection_enlarge(JNIEnv *env,
 	for(i=0; i<size;i++){
 		newTab[i] = tab[i];
 	}
+
+	free(tab);
 	return (jlong) newTab;
 }
 
