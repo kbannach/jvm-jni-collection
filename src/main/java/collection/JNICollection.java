@@ -13,16 +13,13 @@ class JNICollection {
    private int  lastIdx;
 
    public JNICollection(int initSize) {
+      lastIdx = 0;
       size = initSize;
       pointer = allocate(initSize);
    }
 
    public int lastIdx() {
       return lastIdx;
-   }
-
-   public int size() {
-      return size;
    }
 
    /**
