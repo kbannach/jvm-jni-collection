@@ -16,7 +16,7 @@ import java.util.stream.Stream;
  */
 public class BigIntArrayList implements List<Integer> {
 
-   private JNICollection nativeCollection;
+   JNICollection nativeCollection;
 
    /**
     * !!! IMPORTANT !!!<br>
@@ -64,8 +64,7 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public Iterator<Integer> iterator() {
-      // TODO or not TODO ???
-      return null;
+      return new BigIntIterator();
    }
 
    @Override
@@ -230,5 +229,39 @@ public class BigIntArrayList implements List<Integer> {
          throw new IndexOutOfBoundsException("toIndex = " + toIndex);
       if (fromIndex > toIndex)
          throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+   }
+
+   private class BigIntIterator implements Iterator<Integer> {
+
+      private int cursor; // index of next element to return
+      private int lastRet; // index of last element returned; -1 if no such
+
+      public BigIntIterator() {
+         lastRet = -1;
+      }
+
+      @Override
+      public boolean hasNext() {
+         return cursor != size();
+      }
+
+      @Override
+      public Integer next() {
+         int i = cursor;
+         if (i >= size())
+            throw new NoSuchElementException();
+         lastRet = cursor = i + 1;
+         return nativeCollection.get(cursor);
+      }
+
+      @Override
+      public void remove() {
+         if (lastRet < 0)
+            throw new IllegalStateException();
+
+         nativeCollection.remove(lastRet);
+         cursor = lastRet;
+         lastRet = -1;
+      }
    }
 }
