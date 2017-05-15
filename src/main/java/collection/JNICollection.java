@@ -2,7 +2,7 @@ package collection;
 
 import java.util.stream.IntStream;
 
-public class JNICollection {
+class JNICollection {
 
    static {
       System.loadLibrary("collection");
