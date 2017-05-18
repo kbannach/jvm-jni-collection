@@ -5,7 +5,7 @@
 *.h
 *.o
 *.so
-Debug/*
+jni/java_path.txt
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

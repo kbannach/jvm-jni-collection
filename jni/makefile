@@ -1,8 +1,9 @@
 # makefile found at https://developers.redhat.com/blog/2016/11/03/eclipse-for-jni-development-and-debugging-on-linux-java-and-c/
 
 # Define a variables
-CLASS_PATH = ../../../../target/classes
-JAVA_PATH = /usr/lib/jvm/jdk1.8.0_121
+CLASS_PATH := ../target/classes
+JP_FILE := java_path.txt
+JAVA_PATH := $(shell cat $(JP_FILE))
 
 # Debug: -g3=compile with extra debugg infos. -ggdbg3=include things like macro defenitions. -O0=turn off optimizations.
 DEBUGFLAGS = -g3 -ggdb3 -O0
