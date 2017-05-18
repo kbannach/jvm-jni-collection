@@ -30,7 +30,7 @@ JNIEXPORT jlong JNICALL Java_collection_JNICollection_allocate(JNIEnv *env,
 JNIEXPORT jlong JNICALL Java_collection_JNICollection_enlarge(JNIEnv *env,
 		jobject this) {
 	int size = getSize(env, this);
-	int* newTab = (int*) calloc(size * 5 / 3, sizeof(int));
+	int* newTab = (int*) calloc(size + (size >> 1), sizeof(int));
 	int* tab = getPointer(env, this);
 
 	int i;

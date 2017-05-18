@@ -30,7 +30,7 @@ class JNICollection {
    private native long allocate(int newSize);
 
    /**
-    * enlarges the collection to 5/3 of its current size
+    * enlarges the collection
     * 
     * @return new pointer
     */
