@@ -75,7 +75,7 @@ class JNICollection {
    }
 
    public void remove(int index) {
-      for (int i = index; i < lastIdx; i++) {
+      for (int i = index + 1; i < lastIdx; i++) {
          set(get(i + 1), i);
       }
       set(0, lastIdx--);
