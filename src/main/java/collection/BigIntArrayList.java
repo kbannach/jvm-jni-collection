@@ -1,5 +1,6 @@
 package collection;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +44,7 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public int size() {
-      return nativeCollection.lastIdx();
+      return nativeCollection.lastIdx() + 1;
    }
 
    @Override
@@ -64,7 +65,7 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public Iterator<Integer> iterator() {
-      return new BigIntIterator();
+      return new BigIntArrayListIterator();
    }
 
    @Override
@@ -80,6 +81,10 @@ public class BigIntArrayList implements List<Integer> {
    @Override
    public boolean add(Integer e) {
       return nativeCollection.add(e);
+   }
+
+   public boolean add(Integer... e) {
+      return addAll(Arrays.asList(e));
    }
 
    @Override
@@ -217,7 +222,7 @@ public class BigIntArrayList implements List<Integer> {
    }
 
    private void rangeCheck(int index) {
-      if (index > nativeCollection.lastIdx()) {
+      if (index > nativeCollection.lastIdx() || index < 0) {
          throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + nativeCollection.lastIdx());
       }
    }
@@ -231,18 +236,19 @@ public class BigIntArrayList implements List<Integer> {
          throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
    }
 
-   private class BigIntIterator implements Iterator<Integer> {
+   private class BigIntArrayListIterator implements Iterator<Integer> {
 
       private int cursor; // index of next element to return
       private int lastRet; // index of last element returned; -1 if no such
 
-      public BigIntIterator() {
+      public BigIntArrayListIterator() {
          lastRet = -1;
+         cursor = -1;
       }
 
       @Override
       public boolean hasNext() {
-         return cursor != size();
+         return cursor != size() - 1;
       }
 
       @Override

@@ -9,11 +9,17 @@ class JNICollection {
    }
 
    private long pointer;
+   /**
+    * size of allocated collection
+    */
    private int  size;
+   /**
+    * index of last element
+    */
    private int  lastIdx;
 
    public JNICollection(int initSize) {
-      lastIdx = 0;
+      lastIdx = -1;
       size = initSize;
       pointer = allocate(initSize);
    }
@@ -57,7 +63,8 @@ class JNICollection {
       if (lastIdx == size - 1) {
          pointer = enlarge();
       }
-      set(e, ++lastIdx);
+      lastIdx++;
+      set(e, lastIdx);
       return true;
    }
 
@@ -75,14 +82,15 @@ class JNICollection {
    }
 
    public void remove(int index) {
-      for (int i = index + 1; i < lastIdx; i++) {
+      for (int i = index; i < lastIdx; i++) {
          set(get(i + 1), i);
       }
-      set(0, lastIdx--);
+      set(0, lastIdx);
+      lastIdx--;
    }
 
    public void clear() {
       IntStream.rangeClosed(0, lastIdx).forEach(i -> set(0, i));
-      lastIdx = 0;
+      lastIdx = -1;
    }
 }
