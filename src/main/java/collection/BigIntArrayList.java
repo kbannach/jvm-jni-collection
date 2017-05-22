@@ -203,7 +203,7 @@ public class BigIntArrayList implements List<Integer> {
 
    @Override
    public List<Integer> subList(int fromIndex, int toIndex) {
-      return mapToObjStream(fromIndex, toIndex).collect(Collectors.toList());
+      return mapToObjStream(fromIndex, toIndex - 1).collect(Collectors.toList());
    }
 
    private Stream<Integer> mapAllToObjStream() {
